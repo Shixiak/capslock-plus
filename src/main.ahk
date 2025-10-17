@@ -1,7 +1,14 @@
 #Requires AutoHotkey v2.0
 #UseHook
+#Include ./lib/utils.ahk
 global capsUsedAsMod := false
 global prevCapsState := GetKeyState("CapsLock", "T")
+
+; 修改 capsUsedAsMod 变量
+SetCapsUsedAsMod(value) {
+    global capsUsedAsMod
+    capsUsedAsMod := value
+}
 
 CapsLock::SetCapsUsedAsMod(false)
 
@@ -16,6 +23,8 @@ CapsLock up::
     }
 }
 
+
+; 按下 capslock + i, j, k, l 实现方向键功能
 ~CapsLock & i::
 {
     SetCapsUsedAsMod(true)
@@ -40,6 +49,8 @@ CapsLock up::
     Send "{Right}"
 }
 
+
+; capslock + u/o => Ctrl + Left/Right
 ~CapsLock & u::
 {
     SetCapsUsedAsMod(true)
@@ -52,6 +63,8 @@ CapsLock up::
     Send "^{Right}"
 }
 
+
+; capslock + m/n => End/Home
 ~CapsLock & m::
 {
     SetCapsUsedAsMod(true)
@@ -64,25 +77,34 @@ CapsLock up::
     Send "{Home}"
 }
 
+
+; capslock + e => Esc
 ~CapsLock & e::
 {
     SetCapsUsedAsMod(true)
     Send "{Escape}"
 }
 
+
+; capslock + h => Backspace
 ~CapsLock & h::
 {
     SetCapsUsedAsMod(true)
     Send "{Backspace}"
 }
 
-Log(text) {
-    ts := FormatTime(, "yyyy-MM-dd HH:mm:ss")
-    FileAppend(ts "  " text "`n", A_ScriptDir "\debug.log", "UTF-8")
+
+; capslock + d => Delete
+~CapsLock & d::
+{
+    SetCapsUsedAsMod(true)
+    Send "{Delete}"
 }
 
-; 修改 capsUsedAsMod 变量
-SetCapsUsedAsMod(value) {
-    global capsUsedAsMod
-    capsUsedAsMod := value
+
+; capslock + p => Ctrl + p
+~CapsLock & p::
+{
+    SetCapsUsedAsMod(true)
+    Send "^{p}"
 }

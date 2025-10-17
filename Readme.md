@@ -4,11 +4,17 @@
 
 充分发挥 capslock 键的作用!
 
-* capslock + i, k, j, l: 分别对应上下左右方向键.
-* capslock + u, o: 分别对应 ctrl + left/right.
-* capslock + n: home(移动到行首).
-* capslock + m: end(移动到行尾).
-* capslock + e: esc.
+* 光标移动:
+    * capslock + i/k/j/l => up/down/left/right.
+    * capslock + u/o => ctrl + left/right.
+    * capslock + n => home(移动到行首).
+    * capslock + m => end(移动到行尾).
+* 删除:
+    * capslock + d => delete.
+    * capslock + h => backspace.
+* 其他
+    * capslock + p => ctrl + p.
+    * capslock + e => esc.
 
 ## 使用方式
 
