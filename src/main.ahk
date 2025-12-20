@@ -17,8 +17,7 @@ SetCapsUsedAsMod(value) {
 
 CapsLock:: SetCapsUsedAsMod(false)
 
-CapsLock up::
-{
+CapsLock up:: {
     global prevCapsState
     if !capsUsedAsMod {
         SetCapsLockState(prevCapsState ? "AlwaysOff" : "On")
@@ -28,81 +27,130 @@ CapsLock up::
     }
 }
 
-; 按下 capslock + i, j, k, l 实现方向键功能
-~CapsLock & i::
-{
+; #region 通用
+
+; #region 按下 capslock + i, j, k, l 实现方向键功能
+CapsLock & i:: {
     SetCapsUsedAsMod(true)
     Send "{Up}"
 }
 
-~CapsLock & k::
-{
+CapsLock & k:: {
     SetCapsUsedAsMod(true)
     Send "{Down}"
 }
 
-~CapsLock & j::
-{
+CapsLock & j:: {
     SetCapsUsedAsMod(true)
     Send "{Left}"
 }
 
-~CapsLock & l::
-{
+CapsLock & l:: {
     SetCapsUsedAsMod(true)
     Send "{Right}"
 }
+; #endregion
 
-; capslock + u/o => Ctrl + Left/Right
-~CapsLock & u::
-{
+; #region capslock + u/o => Ctrl + Left/Right
+CapsLock & u:: {
     SetCapsUsedAsMod(true)
     Send "^{Left}"
 }
 
-~CapsLock & o::
-{
+CapsLock & o:: {
     SetCapsUsedAsMod(true)
     Send "^{Right}"
 }
+; #endregion
 
-; capslock + m/n => End/Home
-~CapsLock & m::
-{
-    SetCapsUsedAsMod(true)
-    Send "{End}"
-}
-
-~CapsLock & n::
-{
+; #region capslock + [] => Home/End
+CapsLock & [:: {
     SetCapsUsedAsMod(true)
     Send "{Home}"
 }
 
-; capslock + e => Esc
-~CapsLock & e::
-{
+CapsLock & ]:: {
     SetCapsUsedAsMod(true)
-    Send "{Escape}"
+    Send "{End}"
 }
+; #endregion
 
-; capslock + h => Backspace
-~CapsLock & h::
-{
+; #region capslock + h/d => Backspace/Delete
+CapsLock & h:: {
     SetCapsUsedAsMod(true)
     Send "{Backspace}"
 }
 
-; capslock + d => Delete
-~CapsLock & d::
-{
+CapsLock & d:: {
     SetCapsUsedAsMod(true)
     Send "{Delete}"
 }
+; #endregion
 
-; capslock + p => Ctrl + p
-~CapsLock & p::
-{
+; #region capslock + c/v => ctrl + shift + alt + f1/f2
+CapsLock & c:: {
     SetCapsUsedAsMod(true)
-    Send "^{p}"
+    Send "^+!{F1}"
 }
+
+CapsLock & v:: {
+    SetCapsUsedAsMod(true)
+    Send "^+!{F2}"
+}
+
+; capslock + e => Esc
+CapsLock & e:: {
+    SetCapsUsedAsMod(true)
+    Send "{Escape}"
+}
+
+; capslock + w => Ctrl + w
+CapsLock & w:: {
+    SetCapsUsedAsMod(true)
+    Send "^{w}"
+}
+
+; capslock + s => Ctrl + s
+CapsLock & s:: {
+    SetCapsUsedAsMod(true)
+    Send "^{s}"
+}
+; #endregion
+
+; #endregion
+
+; #region VSCode 配置
+
+#HotIf WinActive("ahk_exe Code.exe")
+
+; capslock + r => Ctrl + r
+CapsLock & r:: {
+    SetCapsUsedAsMod(true)
+    Send "^{r}"
+}
+
+; capslock + t => Ctrl + t
+CapsLock & t:: {
+    SetCapsUsedAsMod(true)
+    Send "^{t}"
+}
+
+; capslock + ` => Ctrl + `
+CapsLock & `:: {
+    SetCapsUsedAsMod(true)
+    Send "^{vkC0sc029}"
+}
+
+; capslock + b => Ctrl + b
+CapsLock & b:: {
+    SetCapsUsedAsMod(true)
+    Send "^{b}"
+}
+
+; capslock + f => Ctrl + f
+CapsLock & f:: {
+    SetCapsUsedAsMod(true)
+    Send "^{f}"
+}
+
+; #endregion
