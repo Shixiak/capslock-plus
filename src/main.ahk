@@ -1,20 +1,37 @@
 #Requires AutoHotkey v2.0
 #UseHook
+
 global capsUsedAsMod := false
 global prevCapsState := GetKeyState("CapsLock", "T")
 
-; log.ahk
+; 输出调试日志
 Log(text) {
     ts := FormatTime(, "yyyy-MM-dd HH:mm:ss")
     FileAppend(ts "  " text "`n", A_ScriptDir "\debug.log", "UTF-8")
 }
 
-; 修改 capsUsedAsMod 变量
-SetCapsUsedAsMod(value) {
+SetCapsUsedAsMod(value := true) {
     global capsUsedAsMod
     capsUsedAsMod := value
 }
 
+SendWithCapsUsed(keys, *) {
+    SetCapsUsedAsMod(true)
+    Send keys
+}
+
+; 把映射表注册成真实热键
+RegisterCapsLayer(mapObj, hotIfFn := 0) {
+    if (hotIfFn) 
+        HotIf(hotIfFn)
+    for key, sendKeys in mapObj {
+        Hotkey "CapsLock & " key, SendWithCapsUsed.Bind(sendKeys)
+    }
+    if (hotIfFn)
+        HotIf()
+}
+
+; CapsLock 原始行为
 CapsLock:: SetCapsUsedAsMod(false)
 
 CapsLock up:: {
@@ -27,130 +44,44 @@ CapsLock up:: {
     }
 }
 
-; #region 通用
+; 全局映射
+global GLOBAL_MAP := Map(
+    "i", "{Up}",
+    "k", "{Down}",
+    "j", "{Left}",
+    "l", "{Right}",
 
-; #region 按下 capslock + i, j, k, l 实现方向键功能
-CapsLock & i:: {
-    SetCapsUsedAsMod(true)
-    Send "{Up}"
-}
+    "u", "^{Left}",  ; move cursor by word left
+    "o", "^{Right}",  ; move cursor by word right
 
-CapsLock & k:: {
-    SetCapsUsedAsMod(true)
-    Send "{Down}"
-}
+    "[", "{Home}",
+    "]", "{End}",
 
-CapsLock & j:: {
-    SetCapsUsedAsMod(true)
-    Send "{Left}"
-}
+    "h", "{Backspace}",
+    "d", "{Delete}",
+    "n", "^{z}",  ; undo
+    "y", "^{y}",  ; redo
+    "s", "^{s}",  ; save
 
-CapsLock & l:: {
-    SetCapsUsedAsMod(true)
-    Send "{Right}"
-}
-; #endregion
+    "c", "^+!{F1}",  ; shortcut for snipping tool
+    "v", "^+!{F2}",
 
-; #region capslock + u/o => Ctrl + Left/Right
-CapsLock & u:: {
-    SetCapsUsedAsMod(true)
-    Send "^{Left}"
-}
+    "e", "{Escape}",  ; escape
+    "w", "^{w}"  ; close tab
+)
 
-CapsLock & o:: {
-    SetCapsUsedAsMod(true)
-    Send "^{Right}"
-}
-; #endregion
+RegisterCapsLayer(GLOBAL_MAP)
 
-; #region capslock + [] => Home/End
-CapsLock & [:: {
-    SetCapsUsedAsMod(true)
-    Send "{Home}"
-}
 
-CapsLock & ]:: {
-    SetCapsUsedAsMod(true)
-    Send "{End}"
-}
-; #endregion
+; VSCode 专用映射
+global VSCODE_MAP := Map(
+    "r", "^{r}",            ; open project
+    "t", "^{t}",            ; find identifier
+    ";", "^{vkC0sc029}",    ; toggle terminal (Ctrl+`)
+    "b", "^{b}",            ; toggle sidebar
+    "f", "^{f}",            ; find
+    "p", "^{p}",            ; search file
+    "Enter", "^{Enter}"     ; open in new editor
+)
 
-; #region capslock + h/d => Backspace/Delete
-CapsLock & h:: {
-    SetCapsUsedAsMod(true)
-    Send "{Backspace}"
-}
-
-CapsLock & d:: {
-    SetCapsUsedAsMod(true)
-    Send "{Delete}"
-}
-; #endregion
-
-; #region capslock + c/v => ctrl + shift + alt + f1/f2
-CapsLock & c:: {
-    SetCapsUsedAsMod(true)
-    Send "^+!{F1}"
-}
-
-CapsLock & v:: {
-    SetCapsUsedAsMod(true)
-    Send "^+!{F2}"
-}
-
-; capslock + e => Esc
-CapsLock & e:: {
-    SetCapsUsedAsMod(true)
-    Send "{Escape}"
-}
-
-; capslock + w => Ctrl + w
-CapsLock & w:: {
-    SetCapsUsedAsMod(true)
-    Send "^{w}"
-}
-
-; capslock + s => Ctrl + s
-CapsLock & s:: {
-    SetCapsUsedAsMod(true)
-    Send "^{s}"
-}
-; #endregion
-
-; #endregion
-
-; #region VSCode 配置
-
-#HotIf WinActive("ahk_exe Code.exe")
-
-; capslock + r => Ctrl + r
-CapsLock & r:: {
-    SetCapsUsedAsMod(true)
-    Send "^{r}"
-}
-
-; capslock + t => Ctrl + t
-CapsLock & t:: {
-    SetCapsUsedAsMod(true)
-    Send "^{t}"
-}
-
-; capslock + ` => Ctrl + `
-CapsLock & `:: {
-    SetCapsUsedAsMod(true)
-    Send "^{vkC0sc029}"
-}
-
-; capslock + b => Ctrl + b
-CapsLock & b:: {
-    SetCapsUsedAsMod(true)
-    Send "^{b}"
-}
-
-; capslock + f => Ctrl + f
-CapsLock & f:: {
-    SetCapsUsedAsMod(true)
-    Send "^{f}"
-}
-
-; #endregion
+RegisterCapsLayer(VSCODE_MAP, (*) => WinActive("ahk_exe Code.exe"))
